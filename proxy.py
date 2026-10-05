@@ -1,5 +1,5 @@
 import http.server, http.client, json, os, time, threading, itertools
-D = os.path.expanduser("~/ar-proxy"); LOG = D + "/proxy.log"
+D = os.path.dirname(os.path.realpath(__file__)); LOG = D + "/proxy.log"
 open(LOG, "w").close() if os.path.exists(LOG) and os.path.getsize(LOG) > 1_000_000 else None
 n = itertools.count(1); lock = threading.Lock()
 def log(s):
