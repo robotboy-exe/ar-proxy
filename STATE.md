@@ -5,7 +5,7 @@ and `CLI-TEST.md` (approved — read FIRST for the loop phase); `PLAN.md` only w
 technical history is needed.
 
 ## Status
-**CLI test loop in progress.** Prompt 1 starting now.
+**CLI test loop PASSED — all 5 prompts.** Proxy log clean, history carried, browser tools work. Samuel runs final TUI pass.
 
 ## Approved (Samuel)
 - proxy.py self-locating fix — `b0f3c55`.
@@ -42,30 +42,19 @@ technical history is needed.
   `GET /v1/messages`; the baseline `grep -c "HTTP 4"` already counts it. Loop PASSes
   when the count does NOT rise above that baseline. Do not blame a 404 that is `#1`.
 
-## CLI test result (agent, 13:30)
-- Prompt 1 ("Say test and nothing else."): POST /v1/messages → `resp: HTTP 200 type=text/event-stream`
-  (proxy.log #2, 13:30:02), reply "test". First run (13:29) failed with "Cannot connect to API"
-  because the proxy was dead — invalid test, not a config failure.
-- Continuation (13:37): second prompt via `--session ses_ef3f5…` → proxy.log #3, `n_messages: 3`,
-  roles `["user","assistant","user"]` — prior history carried. Reply "test2".
-- Zero HTTP 400. (The 404 at #1 is the agent's own curl, not opencode.)
+## CLI test result (agent, 00:19–00:23)
+- Prompt 1 "Say test and nothing else.": `#1 00:19:14 POST /v1/messages` → `n_messages: 1` → `resp: HTTP 200 type=text/event-stream`, reply "test".
+- Prompt 2 "Open https://example.com...": `#2 00:20:03 POST /v1/messages` → `n_messages: 3` (history carried) → `resp: HTTP 200`, browser tool called (`playwright-cdp_browser_navigate`).
+- Prompt 3 "Now go to https://example.org...": `#7 00:21:22 POST /v1/messages` → `n_messages: 7` → `resp: HTTP 200`, multiple browser tools (navigate, find, snapshot, evaluate, close).
+- Prompt 4 "Open https://example.com again...": `#11 00:22:35 POST /v1/messages` → `n_messages: 21` → `resp: HTTP 200`, browser tools (navigate, snapshot, close).
+- Prompt 5 "Compare the two pages...": `#15 00:23:36 POST /v1/messages` → `n_messages: 29` → `resp: HTTP 200`, reasoning-heavy answer, no tools.
+- **All counts unchanged**: `HTTP 4` = 2 (baseline), `HTTP 5` = 0, `relay error` = 1 (baseline BrokenPipeError).
+- Zero `HTTP 400` / `Invalid schema` / `content[].thinking`. `ODD[no-choices]` lines present (harmless).
+- Session pinned: all requests share `x-session-id: ses_ef1a2e31effeafBnLD7nbo6yvg`.
 
-## Next (loop phase, NEW session)
-1. Per `CLI-TEST.md`: run prompts 1–5 in order, one at a time, continuing the
-   session with `--session <id>` from the previous request's `x-session-id`.
-2. Before prompts 2–4: if `curl -s -o /dev/null -w "%{http_code}\n" -m 5
-   http://127.0.0.1:9222/json/version` is NOT `200`, START Chromium yourself:
-   `HOME=/data/data/com.termux/files/home env -u PREFIX chromium-cdp start opencode1`,
-   wait a few seconds, re-check; if still not 200 → STOP and tell Samuel.
-   Never start a second Chromium when the check already returns 200. Never
-   `pkill -f`; stop browsers only by PID.
-3. Success gates: proxy.log shows `POST /v1/messages` + `resp: HTTP 200` JSON/SSE (never
-   `text/html`), error count does not rise above baseline (which already includes #1 404).
+## Next
+Samuel runs TUI pass (`oc1`) per `TUI-TEST.md`.
 
 ## Cleanup (next session)
 - `proxy.py.bak` — git history (this repo) replaces it; safe to delete once the
   loop is done. Verify `git status` clean before deleting anything.
-
-## Stop reason
-Setup phase complete: both edits approved, CLI-TEST.md finalized. Stopping per
-Samuel's instruction; the loop runs in a fresh session.
