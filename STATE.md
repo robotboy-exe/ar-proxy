@@ -9,6 +9,10 @@ and `CLI-TEST.md` if it exists; `PLAN.md` only when technical history is needed.
 ## Done
 - Edit 1 (02:15): oc.json provider → `npm:@ai-sdk/anthropic`, baseURL root, backup `oc.json.bak`.
 - Edit 2 (10:14): oc.json baseURL → `http://127.0.0.1:8787/v1`, backup `oc.json.bak2`, valid JSON.
+- Edit 3 (22:04): proxy.py line 2 → `D = os.path.dirname(os.path.realpath(__file__))`
+  (self-locating; `LOG = D + "/proxy.log"` unchanged), backup `proxy.py.bak`.
+  Proven: restarted proxy → log line `#2 22:04:45 POST /v1/messages` → `resp: HTTP 200
+  type=text/event-stream`, reply "test". py_compile OK.
 - Docs migrated into this repo (`ar-proxy/`): PENDING.md → STATE.md; evidence → `ar-proxy/evidence/`.
 - CLI test workflow designed and proven (see `CLI-TEST.md`).
 
