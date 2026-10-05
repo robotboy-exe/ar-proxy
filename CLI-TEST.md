@@ -16,6 +16,11 @@ five as TUI-TEST.md.
 - Auth key: `~/.local/share/opencode1/opencode/auth.json` (with real
   HOME). NEVER open or print it.
 - Override config: `~/ar-proxy/oc.json` via `OPENCODE_CONFIG`.
+- Preflight (browser tool availability): `playwright` appears ONLY in
+  opencode1's own config — key `playwright-cdp` (+ `@playwright/mcp` cli.js
+  path and `PLAYWRIGHT_BROWSERS_PATH`) at `opencode.jsonc:4,8,13`; oc.json has
+  NO playwright keys. The MCP is enabled in the base config, which every CLI
+  run loads alongside oc.json, so prompts 2-4 can use the browser tool.
 
 ## Before starting
 
@@ -26,13 +31,16 @@ five as TUI-TEST.md.
 3. NOTE: proxy.py truncates proxy.log at startup when it exceeds 1 MB
    (proxy.py:3), and request numbering restarts at 1 per start. Take
    freshness/absence of the request from BEFORE the run.
-4. Before prompts 2-4 (browser tools): Chromium and CDP must be up.
-   Check CDP on the port playwright-cdp MCP uses (opencode.jsonc:
-   `--cdp-endpoint=http://127.0.0.1:9222`):
-   `pgrep -f lib/chromium/chrome`  (non-zero = no Chromium process)
+4. Before prompts 2-4 (browser tools): check CDP on the port playwright-cdp
+   MCP uses (opencode.jsonc: `--cdp-endpoint=http://127.0.0.1:9222`):
    `curl -s -o /dev/null -w "%{http_code}\n" -m 5 http://127.0.0.1:9222/json/version`
-   Expect `200`. `000` (or curl exit 7, "Connection refused") = CDP down;
-   start Chromium on 9222 before continuing.
+   - If `200`: CDP is up, do NOT start another Chromium. Proceed.
+   - If NOT `200`: start Chromium yourself:
+     `HOME=/data/data/com.termux/files/home env -u PREFIX chromium-cdp start opencode1`
+     wait a few seconds, run the curl again, expect `200`.
+   - If still not `200`: STOP and tell Samuel. Do not retry.
+   - Stop a browser only by PID (the pid file in
+     `~/.chromium-cdp.pid`), never `pkill -f`.
 
 ## The exact command
 
@@ -115,12 +123,13 @@ What each file holds (grep of `npm`/`baseURL` only):
 - `oc.json` (current): `npm`=@ai-sdk/anthropic, `baseURL`=http://127.0.0.1:8787/v1
   — Edit 2 state, posts to `/v1/messages`. This is the state being tested.
 - `oc.json.bak2`: `npm`=@ai-sdk/anthropic, `baseURL`=http://127.0.0.1:8787
-  — state right after Edit 1, BEFORE the `/v1` edit (posts to `/messages`; this
-  is the 04:40 FAILED TUI state).
+  — the FAILED 04:40 TUI state: posts to `/messages`, proxy forwards to the
+  AgentRouter admin-console web page. Compare/reproduce ONLY, not a working
+  fallback.
 - `oc.json.bak`: no `npm` key, `baseURL`=http://127.0.0.1:8787/v1
   — the ORIGINAL pre-Edit-1 config (OpenAI-compatible family).
 
-- Revert only Edit 2 (back to root baseURL → `/messages`):
+- Revert only Edit 2 (back to root baseURL → `/messages`, the FAILED state):
   `cp ~/ar-proxy/oc.json.bak2 ~/ar-proxy/oc.json`
 - Restore the original pre-fix config:
   `cp ~/ar-proxy/oc.json.bak ~/ar-proxy/oc.json`
