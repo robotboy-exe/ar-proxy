@@ -5,8 +5,7 @@ and `CLI-TEST.md` (approved — read FIRST for the loop phase); `PLAN.md` only w
 technical history is needed.
 
 ## Status
-**Setup phase complete and approved. Next session runs the CLI test loop:**
-prompts 1–5 from `CLI-TEST.md`, one at a time, on ONE continued session.
+**CLI test loop in progress.** Prompt 1 starting now.
 
 ## Approved (Samuel)
 - proxy.py self-locating fix — `b0f3c55`.
@@ -23,6 +22,9 @@ prompts 1–5 from `CLI-TEST.md`, one at a time, on ONE continued session.
   type=text/event-stream`, reply "test". py_compile OK.
 - Docs migrated into this repo (`ar-proxy/`): PENDING.md → STATE.md; evidence → `ar-proxy/evidence/`.
 - CLI test workflow designed and proven (see `CLI-TEST.md`).
+- Edit 4 (6283f75): added `mcp.playwright-cdp` to oc.json — **BUG: placed inside `provider`** (valid JSON, wrong level).
+- Edit 5 (7cf6b2b): moved `mcp` to top level of oc.json. **Lesson: check structure by printing key names at each level, not just "valid JSON".**
+- Edit 6 (716dc0f): CLI-TEST.md Undo command fixed to use `--source=6283f75~1`.
 
 ## Findings
 - `start.err` (2026-10-05 01:17): proxy.py crashed with `FileNotFoundError` opening
