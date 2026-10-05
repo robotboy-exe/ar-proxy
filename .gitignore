@@ -5,3 +5,4 @@ evidence/
 *.bak*
 __pycache__/
 *.pyc
+start.err
