@@ -8,7 +8,7 @@
 - Do not touch v2 (plain `opencode`) or its config.
 - Termux has no /tmp. Use ~.
 - Stop and report after each probe.
-- Evidence is in ~/projects/agentrouter-fix/evidence/. Do not
+- Evidence is in ~/ar-proxy/evidence/. Do not
   delete it.
 
 ## Setup
@@ -65,7 +65,7 @@ A multi-turn session through opencode1-ar, using playwright-cdp
 tools (open a page, then close it), runs with no HTTP 400 in
 proxy.log. I will run that test myself in the TUI.
 
-## UPDATE 2026-10-05 (read PENDING.md first for handoff)
+## UPDATE 2026-10-05 (read STATE.md first for handoff)
 Both original 400s were root-caused to endpoint-family fan-out on the
 OpenAI path (`/v1/chat/completions`); the correct fix is the Anthropic
 gateway (`@ai-sdk/anthropic`), already applied in ~/ar-proxy/oc.json

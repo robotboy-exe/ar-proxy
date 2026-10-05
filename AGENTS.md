@@ -5,11 +5,11 @@ Diagnostic/debugging workspace (not app code). Goal: get opencode1-ar
 proxy with zero HTTP 400s. All target files live under
 `/data/data/com.termux/files/home/...`.
 
-## Read the handoff docs first (high-value sources of truth)
-- `PENDING.md` — current status, next actions (read first).
-- `BRIEF.md` — rules + setup. All rules still apply.
-- `PLAN.md` — technical history, root causes, why the endpoint-family switch.
-- `TUI-TEST.md` — the USER-run verification script (agent cannot drive TUI).
+## Read these first (in order)
+At session start, read: `STATE.md` — current status, next actions (read FIRST);
+`BRIEF.md` — rules + setup. Read `PLAN.md` only when you need technical history /
+root causes / why the endpoint-family switch. `TUI-TEST.md` — the USER-run
+verification script (agent cannot drive TUI). `CLI-TEST.md` — read if it exists.
 Keep these updated when state changes; they ARE the project's memory.
 
 ## CRITICAL environment gotcha
@@ -23,12 +23,24 @@ Keep these updated when state changes; they ARE the project's memory.
 
 ## Rules (from BRIEF.md — non-negotiable)
 - Probe first (read-only). No edits until a probe shows the cause. Do not guess.
-- Before ANY edit: back up the file, show the exact change, and WAIT for user `go`.
+- Edits are allowed ONLY to `oc.json`, `proxy.py`, and the `.md` files. Back up
+  the target file before editing, and git commit BEFORE and AFTER each edit, each
+  message stating what changed and why. Anything else needs user `go`.
 - NEVER open/print `~/.local/share/opencode1/opencode/auth.json` or any key/env var.
 - Do NOT touch v2 (plain `opencode`) or opencode-guysoft's own config.
 - Model is only `agentrouter/deepseek-v4-flash`. Never `gpt-5.6-sol` / build provider.
 - `evidence/` in this repo is read-only; never delete. This repo's `.md` handoffs are not read-only.
+- Every claim must cite a log line or `file:line` — no uncited assertions.
 - Stop and report after each probe.
+
+## Testing (who tests what)
+- Agent tests through the CLI; USER does the final TUI pass (`oc1`, per TUI-TEST.md).
+- Agent CLI tests ALWAYS pass `--model agentrouter/deepseek-v4-flash`.
+- A run that produces no new `proxy.log` line is NOT a valid test.
+
+## Checkpoints
+A checkpoint is: a phase approved, a test passes or fails, or a file edited. At
+each checkpoint, update `STATE.md` without being asked.
 
 ## Components (real paths)
 - Proxy: `ar-proxy/proxy.py`, binds `127.0.0.1:8787`, forwards to agentrouter.org.
@@ -37,8 +49,7 @@ Keep these updated when state changes; they ARE the project's memory.
 - Launcher `oc1` = `~/.local/bin/opencode1-ar`: starts proxy (AR_DEBUG OFF) if not
   running, sets `OPENCODE_CONFIG=$HOME/ar-proxy/oc.json`, runs opencode1.
 - Override: `ar-proxy/oc.json` (backups `oc.json.bak`, `oc.json.bak2`).
-  CURRENT STATE (Edit 2 applied 10:14, awaiting user TUI retest): provider used is
-  `@ai-sdk/anthropic` with `baseURL: http://127.0.0.1:8787/v1` → proven-working `POST /v1/messages`.
+  Current state lives in `STATE.md` (not duplicated here).
 - opencode1 config: `~/.config/opencode1/opencode/opencode.jsonc` (playwright-cdp MCP here;
   MCP pkg under `~/.npm/_npx/381cec31605a419a/node_modules/@playwright/mcp`).
 - `ar-proxy/proxy.py`: `_fix_schema` (null-array-keyword guard, still active) and

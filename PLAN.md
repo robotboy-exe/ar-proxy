@@ -10,7 +10,7 @@ correct fix; the proxy rewrites are now dormant/inert.
 - Never open/print ~/.local/share/opencode1/opencode/auth.json.
 - Do not touch v2 (plain `opencode`) or Guysoft's own config.
 - Termux has no /tmp. Use ~.
-- Evidence dir: ~/projects/agentrouter-fix/evidence/. Never delete.
+- Evidence dir: ~/ar-proxy/evidence/. Never delete.
 - Model is only agentrouter/deepseek-v4-flash. Do NOT use gpt-5.6-sol / build provider.
 - Sandbox note: this environment can reach agentrouter.org (HTTP 200) and the proxy port
   127.0.0.1:8787, but `opencode1 run` defaulted to build/gpt-5.6-sol which bypasses the
@@ -99,7 +99,7 @@ AR_DEBUG write so saved req_N.json shows the fixed body), insert:
 3. Spot check with evidence: replay req_3.json through the proxy twice and confirm the
    transformed body returns 200 (proves both rewrites work end-to-end).
    Use the replay tool (reads AGENTROUTER_API_KEY from env, never prints it):
-   `AGENTROUTER_API_KEY=... python ~/ar-proxy/replay.py ~/projects/agentrouter-fix/evidence/req_3.json 2`
+   `AGENTROUTER_API_KEY=... python ~/ar-proxy/replay.py ~/ar-proxy/evidence/req_3.json 2`
    - DONE, part 1: transform verified structurally (AR_DEBUG file: `content[].thinking` blocks,
      no `reasoning_content`, no `required: null`; `FIXED request body` logged).
    - DONE, part 2: authenticated replay from the sandbox could NOT complete (env key the sandbox
