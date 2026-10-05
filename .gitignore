@@ -1,0 +1,7 @@
+proxy.log
+req_*.json
+resp_*.txt
+evidence/
+*.bak*
+__pycache__/
+*.pyc
