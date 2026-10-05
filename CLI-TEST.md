@@ -118,10 +118,12 @@ roles `["user","assistant","user"]`.)
 
 ## Undo (revert config if needed)
 
-What each file holds (grep of `npm`/`baseURL` only):
+What each file holds (grep of `npm`/`baseURL`/`mcp` only):
 
-- `oc.json` (current): `npm`=@ai-sdk/anthropic, `baseURL`=http://127.0.0.1:8787/v1
-  — Edit 2 state, posts to `/v1/messages`. This is the state being tested.
+- `oc.json` (current): `npm`=@ai-sdk/anthropic, `baseURL`=http://127.0.0.1:8787/v1, `mcp`=playwright-cdp
+  — Edit 3 state (mcp added), posts to `/v1/messages`. This is the state being tested.
+- `oc.json` (parent commit): `npm`=@ai-sdk/anthropic, `baseURL`=http://127.0.0.1:8787/v1, no `mcp`
+  — Edit 2 state, posts to `/v1/messages`. The state before mcp was added.
 - `oc.json.bak2`: `npm`=@ai-sdk/anthropic, `baseURL`=http://127.0.0.1:8787
   — the FAILED 04:40 TUI state: posts to `/messages`, proxy forwards to the
   AgentRouter admin-console web page. Compare/reproduce ONLY, not a working
@@ -129,6 +131,8 @@ What each file holds (grep of `npm`/`baseURL` only):
 - `oc.json.bak`: no `npm` key, `baseURL`=http://127.0.0.1:8787/v1
   — the ORIGINAL pre-Edit-1 config (OpenAI-compatible family).
 
+- Revert only the mcp addition (back to Edit 2 state, no mcp):
+  `git -C ~/ar-proxy restore --source=6283f75~1 -- oc.json`
 - Revert only Edit 2 (back to root baseURL → `/messages`, the FAILED state):
   `cp ~/ar-proxy/oc.json.bak2 ~/ar-proxy/oc.json`
 - Restore the original pre-fix config:
