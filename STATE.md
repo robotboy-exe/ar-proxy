@@ -55,6 +55,15 @@ technical history is needed.
 ## Next
 Samuel runs TUI pass (`oc1`) per `TUI-TEST.md`.
 
-## Cleanup (next session)
-- `proxy.py.bak` — git history (this repo) replaces it; safe to delete once the
-  loop is done. Verify `git status` clean before deleting anything.
+## Cleanup — DO NOT DELETE (Samuel's decision)
+Nothing is to be deleted. Keep:
+- `proxy.py.bak` — backup of proxy.py before self-locating fix
+- `oc.json.bak` — config before any fix (original OpenAI-compatible family)
+- `oc.json.bak2` — the failed version that returned the AgentRouter web page (root baseURL, posts to `/messages`)
+- `req_*.json` / `resp_*.txt` — captures from the 400 era (AR_DEBUG=1 runs)
+- `start.err` — one old proxy crash (FileNotFoundError from wrong HOME), explained in Findings
+- `evidence/` — read-only debug artifacts from the 400 investigation
+- `~/projects/agentrouter-fix` — the OLD copy of this project, kept only for reference. **Never edit it, never run anything from it.** The live project is `~/ar-proxy`.
+
+## TUI test result (Samuel, 2026-10-05)
+Prompts 1 and 3 passed in the TUI (`oc1`). AgentRouter 400 fix verified end-to-end.
