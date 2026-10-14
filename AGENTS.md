@@ -6,10 +6,10 @@ proxy with zero HTTP 400s. All target files live under
 `/data/data/com.termux/files/home/...`.
 
 ## Read these first (in order)
-At session start, read: `STATE.md` — current status, next actions (read FIRST);
-`BRIEF.md` — rules + setup. Read `PLAN.md` only when you need technical history /
-root causes / why the endpoint-family switch. `TUI-TEST.md` — the USER-run
-verification script (agent cannot drive TUI). `CLI-TEST.md` — read if it exists.
+At session start, read: `docs/STATE.md` — current status, next actions (read FIRST);
+`docs/BRIEF.md` — rules + setup. Read `docs/PLAN.md` only when you need technical history /
+root causes / why the endpoint-family switch. `docs/TUI-TEST.md` — the USER-run
+verification script (agent cannot drive TUI). `docs/CLI-TEST.md` — read if it exists.
 Keep these updated when state changes; they ARE the project's memory.
 
 ## CRITICAL environment gotcha
@@ -21,7 +21,7 @@ Keep these updated when state changes; they ARE the project's memory.
 - Termux has no `/tmp`. Use `~` (project dir or `.cache/opencode/tmp`).
 - Termux `ps` clock is skewed (shows 1970); use proxy.log wall-clock timestamps.
 
-## Rules (from BRIEF.md — non-negotiable)
+## Rules (from docs/BRIEF.md — non-negotiable)
 - Probe first (read-only). No edits until a probe shows the cause. Do not guess.
 - Edits are allowed ONLY to `oc.json`, `proxy.py`, and the `.md` files. Back up
   the target file before editing, and git commit BEFORE and AFTER each edit, each
@@ -34,13 +34,13 @@ Keep these updated when state changes; they ARE the project's memory.
 - Stop and report after each probe.
 
 ## Testing (who tests what)
-- Agent tests through the CLI; USER does the final TUI pass (`oc1`, per TUI-TEST.md).
+- Agent tests through the CLI; USER does the final TUI pass (`oc1`, per docs/TUI-TEST.md).
 - Agent CLI tests ALWAYS pass `--model agentrouter/deepseek-v4-flash`.
 - A run that produces no new `proxy.log` line is NOT a valid test.
 
 ## Checkpoints
 A checkpoint is: a phase approved, a test passes or fails, or a file edited. At
-each checkpoint, update `STATE.md` without being asked.
+each checkpoint, update `docs/STATE.md` without being asked.
 
 ## Components (real paths)
 - Proxy: `ar-proxy/proxy.py`, binds `127.0.0.1:8787`, forwards to agentrouter.org.
@@ -49,12 +49,12 @@ each checkpoint, update `STATE.md` without being asked.
 - Launcher `oc1` = `~/.local/bin/opencode1-ar`: starts proxy (AR_DEBUG OFF) if not
   running, sets `OPENCODE_CONFIG=$HOME/ar-proxy/oc.json`, runs opencode1.
 - Override: `ar-proxy/oc.json` (backups `oc.json.bak`, `oc.json.bak2`).
-  Current state lives in `STATE.md` (not duplicated here).
+  Current state lives in `docs/STATE.md` (not duplicated here).
 - opencode1 config: `~/.config/opencode1/opencode/opencode.jsonc` (playwright-cdp MCP here;
   MCP pkg under `~/.npm/_npx/381cec31605a419a/node_modules/@playwright/mcp`).
 - `ar-proxy/proxy.py`: `_fix_schema` (null-array-keyword guard, still active) and
   `_fix_reasoning` (reasoning echo transform, DORMANT/inert on Anthropic bodies) — do not
-  re-enable the reasoning rewrite without re-checking PLAN.md REVISION 2 rationale.
+  re-enable the reasoning rewrite without re-checking docs/PLAN.md REVISION 2 rationale.
 
 ## Routing facts (root cause)
 - Endpoint family is chosen STATICALLY by provider `npm` + `baseURL` (no per-request pin):
@@ -72,7 +72,7 @@ each checkpoint, update `STATE.md` without being asked.
   admin-console HTML (HTTP 200, `type=text/html`) — that is a FAIL signal, not success.
 
 ## Verification
-- Success gates (TUI-TEST.md): proxy.log shows `POST /v1/messages` + `resp: HTTP 200` with
+- Success gates (docs/TUI-TEST.md): proxy.log shows `POST /v1/messages` + `resp: HTTP 200` with
   JSON/SSE (never `text/html`), and zero `HTTP 400` / `Invalid schema` / `content[].thinking`.
   `ODD[no-choices]` lines are expected/harmless. Count errors: `grep -c "HTTP 4" ~/ar-proxy/proxy.log`
   before vs after.
