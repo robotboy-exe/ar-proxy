@@ -38,7 +38,7 @@ five as TUI-TEST.md.
    - If NOT `200`: start Chromium yourself:
      `HOME=/data/data/com.termux/files/home env -u PREFIX chromium-cdp start opencode1`
      wait a few seconds, run the curl again, expect `200`.
-   - If still not `200`: STOP and tell Samuel. Do not retry.
+   - If still not `200`: STOP and tell the user. Do not retry.
    - Stop a browser only by PID (the pid file in
      `~/.chromium-cdp.pid`), never `pkill -f`.
 

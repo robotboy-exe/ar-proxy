@@ -1,6 +1,6 @@
-# TUI test for opencode1-ar (run by Samuel, not the agent)
+# TUI test for opencode1-ar (run by the user, not the agent)
 
-The agent cannot use the TUI. Samuel sends these prompts himself
+The agent cannot use the TUI. The user sends these prompts himself
 and the agent only reads the log afterwards.
 
 ## Before starting

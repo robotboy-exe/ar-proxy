@@ -5,9 +5,9 @@ and `CLI-TEST.md` (approved — read FIRST for the loop phase); `PLAN.md` only w
 technical history is needed.
 
 ## Status
-**CLI test loop PASSED — all 5 prompts.** Proxy log clean, history carried, browser tools work. Samuel's TUI pass done and passed.
+**CLI test loop PASSED — all 5 prompts.** Proxy log clean, history carried, browser tools work. The user's TUI pass done and passed.
 
-## Approved (Samuel)
+## Approved (user)
 - proxy.py self-locating fix — `b0f3c55`.
 - CLI-TEST.md workflow — `af8a6f3` + this commit; Undo section, Chromium/CDP
   pre-check, playwright preflight all incorporated. Ready to use as the loop
@@ -53,10 +53,10 @@ technical history is needed.
 - Session pinned: all requests share `x-session-id: ses_ef1a2e31effeafBnLD7nbo6yvg`.
 
 ## Next
-Samuel's TUI pass (`oc1`) done and passed. No further action needed.
+The user's TUI pass (`oc1`) done and passed. No further action needed.
 
-## Cleanup — DO NOT DELETE (Samuel's decision)
-Nothing is to be deleted. **Only Samuel can reverse this decision, never an agent.** Keep:
+## Cleanup — DO NOT DELETE (the user's decision)
+Nothing is to be deleted. **Only the user can reverse this decision, never an agent.** Keep:
 - `proxy.py.bak` — backup of proxy.py before self-locating fix
 - `oc.json.bak` — config before any fix (original OpenAI-compatible family)
 - `oc.json.bak2` — the failed version that returned the AgentRouter web page (root baseURL, posts to `/messages`)
@@ -65,5 +65,5 @@ Nothing is to be deleted. **Only Samuel can reverse this decision, never an agen
 - `evidence/` = saved prompts and evidence from the 400 era.
 - `~/projects/agentrouter-fix` — the OLD copy of this project, kept only for reference. **Never edit it, never run anything from it.** The live project is `~/ar-proxy`.
 
-## TUI test result (Samuel, 2026-10-06)
+## TUI test result (user, 2026-10-06)
 Prompts 1 and 3 passed in the TUI (`oc1`). AgentRouter 400 fix verified end-to-end.
