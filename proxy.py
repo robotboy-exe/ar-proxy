@@ -50,8 +50,24 @@ class H(http.server.BaseHTTPRequestHandler):
                     d = True
                 return d
 
+            def _fix_empty(j):
+                ms = j.get("messages")
+                if not isinstance(ms, list): return False
+                def _empty(m):
+                    c = m.get("content")
+                    if c is None or c == "" or c == []: return True
+                    if isinstance(c, list):
+                        return all(isinstance(p, dict) and p.get("type") == "text" and not (p.get("text") or "").strip() for p in c)
+                    return False
+                gone = [k for k, m in enumerate(ms) if isinstance(m, dict) and m.get("role") == "assistant" and _empty(m)]
+                if gone:
+                    j["messages"] = [m for k, m in enumerate(ms) if k not in gone]
+                    log(f"  EMPTY-MSG removed at index {gone} before forwarding")
+                return bool(gone)
+
             if isinstance(j, dict):
-                if _fix_schema(j) or _fix_reasoning(j):
+                e = _fix_empty(j)
+                if _fix_schema(j) or _fix_reasoning(j) or e:
                     body = json.dumps(j, ensure_ascii=False).encode()
                     log("  FIXED request body (schema nulls / thinking echo)")
             if os.environ.get("AR_DEBUG"): open(f"{D}/req_{i}.json", "wb").write(body)
