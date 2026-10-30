@@ -118,4 +118,4 @@ class H(http.server.BaseHTTPRequestHandler):
         for l in lines[-3:]: log(f"  tail: {l[:300]}")
         if r.status != 200: log("  body: " + raw[:400].decode("utf-8", "replace"))
     do_GET = do_POST = _go
-http.server.ThreadingHTTPServer(("127.0.0.1", 8787), H).serve_forever()
+http.server.ThreadingHTTPServer(("127.0.0.1", int(__import__("os").environ.get("AR_PORT", 8787))), H).serve_forever()
