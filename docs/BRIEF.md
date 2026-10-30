@@ -20,8 +20,9 @@
 - ~/ar-proxy/oc.json is the override file. ~/.local/bin/opencode1-ar
   starts the proxy and runs opencode1 with that override.
 - opencode1 config: ~/.config/opencode1/opencode/opencode.jsonc
-- Model: agentrouter/deepseek-v4-flash. A playwright MCP server
-  named playwright-cdp is configured for opencode1 (find where).
+- Models: `agentrouter/deepseek-v4-flash` and
+  `agentrouter-gpt/gpt-5.6-sol` (`oc.json:1`). A playwright MCP server named
+  playwright-cdp is configured for opencode1 (find where).
 - You are running inside opencode-guysoft on an OpenRouter model.
   Do not edit Guysoft's own config.
 
@@ -75,3 +76,11 @@ now speaks Anthropic) but opencode1 v1.18.33 posts to `/messages`
 failed. Next action (proposed, awaiting go): change oc.json baseURL to
 `http://127.0.0.1:8787/v1` so the path becomes the proven-working
 `/v1/messages`.
+
+## UPDATE 2026-10-30 (read STATE.md first for handoff)
+The workspace now supports both configured models. DeepSeek retains the Anthropic
+`/v1/messages` route described above. GPT 5.6 Sol uses `@ai-sdk/openai` with the
+same proxy base URL (`oc.json:1`), which routes to `/v1/responses`; repeated live
+requests return HTTP 200 (`proxy.log:2000-2002`, `proxy.log:2016-2019`,
+`proxy.log:2033-2036`). The 2026-10-05 OpenAI-compatible diagnosis remains
+historical context for DeepSeek's old `/v1/chat/completions` route.

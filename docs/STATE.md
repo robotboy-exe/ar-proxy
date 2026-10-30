@@ -1,11 +1,14 @@
-# STATE — AgentRouter 400 fix on opencode1-ar (handoff 2026-10-05)
+# STATE — AgentRouter proxy on opencode1-ar (handoff 2026-10-30)
 
 Read order: `AGENTS.md` first (workspace rules), then `BRIEF.md` (rules + setup),
 and `CLI-TEST.md` (approved — read FIRST for the loop phase); `PLAN.md` only when
 technical history is needed.
 
 ## Status
-**CLI test loop PASSED — all 5 prompts.** Proxy log clean, history carried, browser tools work. The user's TUI pass done and passed.
+**Both configured AgentRouter models are operational.** DeepSeek's five-prompt CLI
+loop and user TUI pass succeeded (`docs/STATE.md:54-62`, `docs/STATE.md:81-82`).
+GPT 5.6 Sol is configured at `oc.json:1`; repeated multi-turn Responses API calls
+return HTTP 200 (`proxy.log:2000-2002`, `proxy.log:2016-2019`, `proxy.log:2033-2036`).
 
 ## Approved (user)
 - proxy.py self-locating fix — `b0f3c55`.
@@ -25,6 +28,10 @@ technical history is needed.
 - Edit 4 (6283f75): added `mcp.playwright-cdp` to oc.json — **BUG: placed inside `provider`** (valid JSON, wrong level).
 - Edit 5 (7cf6b2b): moved `mcp` to top level of oc.json. **Lesson: check structure by printing key names at each level, not just "valid JSON".**
 - Edit 6 (716dc0f): CLI-TEST.md Undo command fixed to use `--source=6283f75~1`.
+- Edit 7 (`54c6008`): added the empty assistant-message guard at `proxy.py:53-72`.
+- Edit 8 (`d31ca09`): added `agentrouter-gpt/gpt-5.6-sol` through
+  `@ai-sdk/openai` at `oc.json:1`; live traffic uses `/v1/responses` and returns
+  HTTP 200 (`proxy.log:2000-2002`, `proxy.log:2016-2019`, `proxy.log:2033-2036`).
 
 ## Findings
 - `start.err` (2026-10-05 01:17): proxy.py crashed with `FileNotFoundError` opening
@@ -38,9 +45,11 @@ technical history is needed.
 - Agent shell env: `$HOME` → `.opencode-guysoft` AND `PREFIX` → `…/.opencode-guysoft-prefix`.
   `PREFIX` breaks opencode1's runtime probe (`~/.local/bin/opencode1` launcher line 16);
   remove it with `env -u PREFIX` (see CLI-TEST.md).
-- **Baseline after the last proxy restart:** `#1` is a 404 from the agent's own curl
+- **Historical 2026-10-05 baseline:** `#1` was a 404 from the agent's own curl
   `GET /v1/messages`; the baseline `grep -c "HTTP 4"` already counts it. Loop PASSes
   when the count does NOT rise above that baseline. Do not blame a 404 that is `#1`.
+- GPT's `@ai-sdk/openai` provider uses `/v1/responses`, not the legacy DeepSeek
+  `/v1/chat/completions` path (`oc.json:1`, `proxy.log:2016-2019`).
 
 ## CLI test result (agent, 00:19–00:23)
 - Prompt 1 "Say test and nothing else.": `#1 00:19:14 POST /v1/messages` → `n_messages: 1` → `resp: HTTP 200 type=text/event-stream`, reply "test".
@@ -60,6 +69,10 @@ Nothing is to be deleted. **Only the user can reverse this decision, never an ag
 - `proxy.py.bak` — backup of proxy.py before self-locating fix
 - `oc.json.bak` — config before any fix (original OpenAI-compatible family)
 - `oc.json.bak2` — the failed version that returned the AgentRouter web page (root baseURL, posts to `/messages`)
+- `oc.json.bak-before-gpt` — config before the GPT provider was added
+- `proxy.py.bak-before-empty-fix` — proxy before the empty assistant-message guard
+- `AGENTS.md.bak-before-gpt-docs`, `docs/BRIEF.md.bak-before-gpt-docs`, and
+  `docs/STATE.md.bak-before-gpt-docs` — docs before the 2026-10-30 scope update
 - `req_*.json` / `resp_*.txt` — captures from the 400 era (AR_DEBUG=1 runs)
 - `start.err` = one old proxy crash at about 01:17 on 2026-10-05, already explained (the agent shell had the wrong HOME), not a live bug.
 - `evidence/` = saved prompts and evidence from the 400 era.
@@ -67,3 +80,8 @@ Nothing is to be deleted. **Only the user can reverse this decision, never an ag
 
 ## TUI test result (user, 2026-10-06)
 Prompts 1 and 3 passed in the TUI (`oc1`). AgentRouter 400 fix verified end-to-end.
+
+## GPT runtime result (2026-10-30)
+The live opencode session uses `agentrouter-gpt/gpt-5.6-sol` through
+`POST /v1/responses`; consecutive tool-bearing turns return HTTP 200
+(`proxy.log:2000-2015`, `proxy.log:2016-2032`, `proxy.log:2033-2049`).
